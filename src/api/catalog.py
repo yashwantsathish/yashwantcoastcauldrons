@@ -2,6 +2,8 @@ from fastapi import APIRouter
 
 router = APIRouter()
 
+import sqlalchemy
+from src import database as db
 
 @router.get("/catalog/", tags=["catalog"])
 def get_catalog():

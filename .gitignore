@@ -4,3 +4,6 @@ venv
 __pycache__
 /.env
 info.log
+# dotenv environment variables file
+.env
+.env.test

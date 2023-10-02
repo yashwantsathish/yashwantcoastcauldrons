@@ -38,8 +38,8 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     gold = gold.first()[0]
 
     for barrel in barrels_delivered:
-        ml_needed += barrel.ml_per_barrel * barrel.quantity
-        cost += barrel.price * barrel.quantity
+        ml_needed = ml_needed + barrel.ml_per_barrel * barrel.quantity
+        cost = cost + barrel.price * barrel.quantity
     
     updated_ml = num_red_ml - ml_needed
     updated_gold = gold - cost

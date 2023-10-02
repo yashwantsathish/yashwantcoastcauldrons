@@ -73,9 +73,8 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
             ml = barrel.ml_per_barrel
             potion_type = barrel.potion_type
             price = barrel.price
-
-    if num_red_potions < 10:
-        num_barrels = 1
+            if num_red_potions < 10:
+                num_barrels = 1
 
     return [
         {

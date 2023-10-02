@@ -60,7 +60,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     num_potions = num_potions.first()[0]
 
     if num_potions > 0:
-        gold_paid = 100
+        gold_paid = 50
         num_bought = 1
 
         gold = gold + gold_paid

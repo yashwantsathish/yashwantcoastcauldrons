@@ -19,7 +19,28 @@ class PotionInventory(BaseModel):
 @router.post("/deliver")
 def post_deliver_bottles(potions_delivered: list[PotionInventory]):
     """ """
-    print(potions_delivered)
+    ml_needed = 0
+    potions_needed = 0
+
+    with db.engine.begin() as connection:
+        ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
+        potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
+
+    ml = ml.first()[0]
+    potions = potions.first()[0]
+
+    for pot in potions_delivered:
+        ml_needed = ml_needed + pot.quantity * 100
+        potions_needed = potions_needed + pot.quantity
+
+    ml = ml - ml_needed
+    potions = potions + potions_needed
+
+    with db.engine.begin() as connection:
+        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(ml)))
+        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_potions = " + str(potions)))
+    
+    print(ml_needed)
 
     return "OK"
 
@@ -36,9 +57,15 @@ def get_bottle_plan():
 
     # Initial logic: bottle all barrels into red potions.
 
+    with db.engine.begin() as connection:
+        ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
+
+    ml = ml.first()[0]
+    num_potions = ml // 100
+
     return [
             {
                 "potion_type": [100, 0, 0, 0],
-                "quantity": 5,
+                "quantity": num_potions,
             }
         ]

@@ -41,7 +41,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         ml_needed = ml_needed + barrel.ml_per_barrel * barrel.quantity
         cost = cost + barrel.price * barrel.quantity
     
-    updated_ml = num_red_ml - ml_needed
+    updated_ml = num_red_ml + ml_needed
     updated_gold = gold - cost
     
     with db.engine.begin() as connection:

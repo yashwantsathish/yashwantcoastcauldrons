@@ -63,9 +63,12 @@ def get_bottle_plan():
     ml = ml.first()[0]
     num_potions = ml // 100
 
+    print("ml: " + str(ml))
+    
     return [
             {
                 "potion_type": [100, 0, 0, 0],
                 "quantity": num_potions,
             }
         ]
+

@@ -19,6 +19,7 @@ class PotionInventory(BaseModel):
 @router.post("/deliver")
 def post_deliver_bottles(potions_delivered: list[PotionInventory]):
     """ """
+    print("bottler post")
     ml_needed = 0
     potions_needed = 0
 
@@ -29,7 +30,9 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
     ml = ml.first()[0]
     potions = potions.first()[0]
 
+    print(type(ml))
     for pot in potions_delivered:
+        print("type pot" + str(type(pot)))
         ml_needed = ml_needed + pot.quantity * 100
         potions_needed = potions_needed + pot.quantity
 
@@ -51,6 +54,7 @@ def get_bottle_plan():
     Go from barrel to bottle.
     """
 
+    print("bottler plan")
     # Each bottle has a quantity of what proportion of red, blue, and
     # green potion to add.
     # Expressed in integers from 1 to 100 that must sum up to 100.

@@ -11,14 +11,23 @@ def get_catalog():
     Each unique item combination must have only a single price.
     """
 
-    # Can return a max of 20 items.
+    #Potion Catalog
+    print("Catalog")
 
-    return [
-            {
-                "sku": "RED_POTION_0",
-                "name": "red potion",
-                "quantity": 1,
-                "price": 50,
-                "potion_type": [100, 0, 0, 0],
-            }
-        ]
+    with db.engine.begin() as connection:
+        num_potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
+        
+    num_potions = num_potions.first()[0]
+    # Can return a max of 6 unique skus.
+    if  num_potions == 0:
+        return []
+    else:
+        return [
+                {
+                    "sku": "RED_POTION_0",
+                    "name": "red potion",
+                    "quantity": num_potions,
+                    "price": 50,
+                    "potion_type": [100, 0, 0, 0],
+                },  
+            ]

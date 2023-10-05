@@ -23,7 +23,7 @@ class Barrel(BaseModel):
 @router.post("/deliver")
 def post_deliver_barrels(barrels_delivered: list[Barrel]):
     """ """
-    print(barrels_delivered)
+    print("barrel post")
 
     ml_needed = 0
     cost = 0
@@ -38,8 +38,10 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     gold = gold.first()[0]
 
     for barrel in barrels_delivered:
-        ml_needed = ml_needed + barrel.ml_per_barrel * barrel.quantity
-        cost = cost + barrel.price * barrel.quantity
+        ml_needed = ml_needed + barrel.ml_per_barrel
+        print("barrel post: ml_needed" + str(ml_needed))
+        cost = cost + barrel.price 
+        print("barrel post: cost" + str(cost))
     
     updated_ml = num_red_ml + ml_needed
     updated_gold = gold - cost
@@ -48,14 +50,18 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(updated_ml)))
         connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = " + str(updated_gold)))
 
+    print("barrels delivered: " + str(ml_needed))
+
     return "OK"
 
 # Gets called once a day
 @router.post("/plan")
 def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     """ """
-    print(wholesale_catalog)
+    print("barrel plan")
     
+    barrels_delivered = []
+
     ml = 0
     potion_type = 0
     price = 0
@@ -69,19 +75,19 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     money = money.first()[0]
 
     for barrel in wholesale_catalog:
+        if num_red_potions < 10:
+            num_barrels = 1
         if barrel.sku == "SMALL_RED_BARREL":
-            ml = barrel.ml_per_barrel
-            potion_type = barrel.potion_type
-            price = barrel.price
-            if num_red_potions < 10:
-                num_barrels = 1
+            barrels_delivered.append(
+                {
+                    "sku": barrel.sku,
+                    "ml_per_barrel": barrel.ml_per_barrel,
+                    "potion_type": barrel.potion_type,
+                    "price": barrel.price,
+                    "quantity": num_barrels, 
+                }
+            )
 
-    return [
-        {
-            "sku": "SMALL_RED_BARREL",
-            "ml_per_barrel": ml,
-            "potion_type": potion_type,
-            "price": price,
-            "quantity": num_barrels, 
-        }
-    ]
+    print("passing in")
+    print(barrels_delivered)
+    return barrels_delivered

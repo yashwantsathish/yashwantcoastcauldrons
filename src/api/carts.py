@@ -46,6 +46,7 @@ class CartCheckout(BaseModel):
 @router.post("/{cart_id}/checkout")
 def checkout(cart_id: int, cart_checkout: CartCheckout):
     """ """
+    print(checkout)
     num_potions = 0
     gold = 0
     num_bought = 0

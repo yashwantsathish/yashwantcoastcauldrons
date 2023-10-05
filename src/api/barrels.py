@@ -89,5 +89,5 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
             )
 
     print("passing in")
-    print(barrels_delivered)
+    print(post_deliver_barrels(barrels_delivered))
     return barrels_delivered

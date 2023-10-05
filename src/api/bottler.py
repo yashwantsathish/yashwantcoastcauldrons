@@ -20,6 +20,7 @@ class PotionInventory(BaseModel):
 def post_deliver_bottles(potions_delivered: list[PotionInventory]):
     """ """
     print("bottler post")
+    print(potions_delivered)
     ml_needed = 0
     potions_needed = 0
 

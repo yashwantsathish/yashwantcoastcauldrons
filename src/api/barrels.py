@@ -84,7 +84,14 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": num_barrels, 
                 }       
             )
+            return [
+                {
+                    "sku": "SMALL_RED_BARREL",
+                    "quantity": 1,
+                }
+            ]
+    
     
     print("passing in")
     print(barrels_delivered)
-    return barrels_delivered
+    

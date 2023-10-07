@@ -84,7 +84,6 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": num_barrels, 
                 }       
             )
-            print(post_deliver_barrels(barrels_delivered))
             return [
                 {
                     "sku": "SMALL_RED_BARREL",
@@ -97,9 +96,9 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     print(barrels_delivered)
 
     return [
-                {
-                    "sku": "SMALL_RED_BARREL",
-                    "quantity": 1,
-                }
-            ]
+        {
+            "sku": "SMALL_RED_BARREL",
+            "quantity": 1,
+        }
+    ]
     

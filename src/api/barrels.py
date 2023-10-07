@@ -28,6 +28,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     ml_needed = 0
     cost = 0
 
+    print(barrels_delivered)
     #Retrieving values from Database
     with db.engine.begin() as connection:
         num_red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
@@ -37,11 +38,10 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     num_red_ml = num_red_ml.first()[0]
     gold = gold.first()[0]
 
-    for barrel in barrels_delivered:
-        ml_needed = ml_needed + barrel.ml_per_barrel
-        print("barrel post: ml_needed" + str(ml_needed))
-        cost = cost + barrel.price 
-        print("barrel post: cost" + str(cost))
+    ml_needed = ml_needed + barrels_delivered[0].ml_per_barrel
+    print("barrel post: ml_needed" + str(ml_needed))
+    cost = cost + barrels_delivered[0].price 
+    print("barrel post: cost" + str(cost))
     
     updated_ml = num_red_ml + ml_needed
     updated_gold = gold - cost
@@ -81,13 +81,10 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
             barrels_delivered.append(
                 {
                     "sku": barrel.sku,
-                    "ml_per_barrel": barrel.ml_per_barrel,
-                    "potion_type": barrel.potion_type,
-                    "price": barrel.price,
                     "quantity": num_barrels, 
-                }
+                }       
             )
-
+    
     print("passing in")
-    print(post_deliver_barrels(barrels_delivered))
+    print(barrels_delivered)
     return barrels_delivered

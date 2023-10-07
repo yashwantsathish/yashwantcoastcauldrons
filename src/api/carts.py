@@ -48,7 +48,8 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     """ """
     print(checkout)
     num_potions = 0
-    gold = 0
+    gold = 0 
+    
     num_bought = 0
     gold_paid = 0
 

@@ -30,7 +30,8 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
 
     ml_needed = 0
     cost = 0
-
+    num_ml = 0
+    
     print(barrels_delivered)
     barrel = barrels_delivered[0]
 
@@ -40,6 +41,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
             num_green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
         num_ml = num_green_ml.first()[0]
         num_ml = num_ml + barrel.ml_per_barrel
+        print("green: " + str(num_ml))
         with db.engine.begin() as connection:
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = " + str(num_ml)))
 
@@ -49,6 +51,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
             num_red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
         num_ml = num_red_ml.first()[0]
         num_ml = num_ml + barrel.ml_per_barrel
+        print("red: " + str(num_ml))
         with db.engine.begin() as connection:
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(num_ml)))
     else:
@@ -57,6 +60,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
             num_blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
         num_ml = num_blue_ml.first()[0]
         num_ml = num_ml + barrel.ml_per_barrel
+        print("blue: " + str(num_ml))
         with db.engine.begin() as connection:
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = " + str(num_ml)))
 

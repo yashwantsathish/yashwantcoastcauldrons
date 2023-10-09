@@ -27,7 +27,6 @@ def get_cart(cart_id: int):
     """ """     
     return {}
 
-
 class CartItem(BaseModel):
     quantity: int
 

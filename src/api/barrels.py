@@ -66,6 +66,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
 
     # Getting retrieved value from tuple
     gold = gold.first()[0]
+    print(gold)
 
     cost = cost + barrel.price 
     print("barrel post: cost" + str(cost))

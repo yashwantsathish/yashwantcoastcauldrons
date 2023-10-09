@@ -18,13 +18,13 @@ class NewCart(BaseModel):
 @router.post("/")
 def create_cart(new_cart: NewCart):
     """ """    
+    print("create cart")
     return {"cart_id": 1}
 
 
 @router.get("/{cart_id}")
 def get_cart(cart_id: int):
-    """ """
-    
+    """ """     
     return {}
 
 
@@ -35,6 +35,8 @@ class CartItem(BaseModel):
 @router.post("/{cart_id}/items/{item_sku}")
 def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
     """ """
+    print("set item quantity")
+    print(cart_item)
     cart_item.quantity = 1
     return "OK"
 

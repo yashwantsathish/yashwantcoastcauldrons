@@ -1,3 +1,4 @@
+import random
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from src.api import auth
@@ -109,14 +110,16 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     num_potions = num_red_potions + num_blue_potions + num_green_potions
    
     #Get current hour
-    current_datetime = datetime.datetime.now()
-    hour = current_datetime.hour   
-    print("hour: " + str(hour)) 
+    # current_datetime = datetime.datetime.now()
+    # hour = current_datetime.hour   
+    # print("hour: " + str(hour)) 
+
+    index = random.randint(0, 2)
     
     for barrel in wholesale_catalog:
         if num_potions < 10:
             num_barrels = 1
-        if barrel.sku == "SMALL_RED_BARREL" and (hour >= 0 and hour <= 7):
+        if barrel.sku == "SMALL_RED_BARREL" and (index == 0):
             print("buying red barrel")
             which_barrel = 1
             barrels_delivered.append(
@@ -131,7 +134,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "SMALL_GREEN_BARREL" and (hour >= 8 and hour <= 15):
+        elif barrel.sku == "SMALL_GREEN_BARREL" and (index == 1):
             print("buying green barrel")
             which_barrel = 2
             return [
@@ -140,7 +143,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "SMALL_BLUE_BARREL" and (hour >= 16 and hour <= 23):
+        elif barrel.sku == "SMALL_BLUE_BARREL" and (index == 2):
             print("buying blue barrel")
             which_barrel = 0
             return [

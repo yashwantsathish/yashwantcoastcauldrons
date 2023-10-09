@@ -5,6 +5,8 @@ from src.api import auth
 import sqlalchemy
 from src import database as db
 
+import datetime
+
 router = APIRouter(
     prefix="/barrels",
     tags=["barrels"],
@@ -29,35 +31,61 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     cost = 0
 
     print(barrels_delivered)
+    barrel = barrels_delivered[0]
+
+    if barrel.sku == "SMALL_GREEN_BARREL":
+        print("green")
+        with db.engine.begin() as connection:
+            num_green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
+        num_ml = num_green_ml.first()[0]
+        num_ml = num_ml + barrel.ml_per_barrel
+        with db.engine.begin() as connection:
+            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = " + str(num_ml)))
+
+    elif barrel.sku == "SMALL_RED_BARREL":
+        print("red")
+        with db.engine.begin() as connection:
+            num_red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
+        num_ml = num_red_ml.first()[0]
+        num_ml = num_ml + barrel.ml_per_barrel
+        with db.engine.begin() as connection:
+            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(num_ml)))
+    else:
+        print("blue")
+        with db.engine.begin() as connection:
+            num_blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
+        num_ml = num_blue_ml.first()[0]
+        num_ml = num_ml + barrel.ml_per_barrel
+        with db.engine.begin() as connection:
+            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = " + str(num_ml)))
+
     #Retrieving values from Database
     with db.engine.begin() as connection:
-        num_red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
         gold = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
 
     # Getting retrieved value from tuple
-    num_red_ml = num_red_ml.first()[0]
     gold = gold.first()[0]
 
-    ml_needed = ml_needed + barrels_delivered[0].ml_per_barrel
-    print("barrel post: ml_needed" + str(ml_needed))
-    cost = cost + barrels_delivered[0].price 
+    cost = cost + barrel.price 
     print("barrel post: cost" + str(cost))
     
-    updated_ml = num_red_ml + ml_needed
     updated_gold = gold - cost
     
     with db.engine.begin() as connection:
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(updated_ml)))
         connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = " + str(updated_gold)))
 
     print("barrels delivered: " + str(ml_needed))
 
     return "OK"
 
+
 # Gets called once a day
 @router.post("/plan")
 def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     """ """
+    global which_barrel 
+    which_barrel = 0
+
     print("barrel plan")
     
     barrels_delivered = []
@@ -70,14 +98,25 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     with db.engine.begin() as connection:
         num_red_potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
         money = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
+        num_green_potions = connection.execute(sqlalchemy.text("SELECT num_green_potions FROM global_inventory"))
+        num_blue_potions = connection.execute(sqlalchemy.text("SELECT num_blue_potions FROM global_inventory"))
 
     num_red_potions = num_red_potions.first()[0]
     money = money.first()[0]
+    num_green_potions = num_green_potions.first()[0]
+    num_blue_potions = num_blue_potions.first()[0]
 
+    num_potions = num_red_potions + num_blue_potions + num_green_potions
+   
+    #Get current hour
+    current_datetime = datetime.datetime.now()
+    hour = current_datetime.hour    
+    
     for barrel in wholesale_catalog:
-        if num_red_potions < 10:
+        if num_potions < 10:
             num_barrels = 1
-        if barrel.sku == "SMALL_RED_BARREL":
+        if barrel.sku == "SMALL_RED_BARREL" and (hour >= 0 and hour <= 7):
+            which_barrel = 1
             barrels_delivered.append(
                 {
                     "sku": barrel.sku,
@@ -90,15 +129,20 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-    
-    
-    print("passing in")
-    print(barrels_delivered)
-
-    return [
-        {
-            "sku": "SMALL_RED_BARREL",
-            "quantity": 1,
-        }
-    ]
+        elif barrel.sku == "SMALL_GREEN_BARREL" and (hour >= 8 and hour <= 15):
+            which_barrel = 2
+            return [
+                {
+                    "sku": "SMALL_GREEN_BARREL",
+                    "quantity": 1,
+                }
+            ]
+        elif barrel.sku == "SMALL_BLUE_BARREL" and (hour >= 16 and hour <= 23):
+            which_barrel = 0
+            return [
+                {
+                    "sku": "SMALL_BLUE_BARREL",
+                    "quantity": 1,
+                }
+            ]
     

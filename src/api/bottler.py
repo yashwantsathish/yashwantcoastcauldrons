@@ -25,26 +25,44 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
     potions_needed = 0
 
     with db.engine.begin() as connection:
-        ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
-        potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
+        red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
+        red_potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
+        blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
+        blue_potions = connection.execute(sqlalchemy.text("SELECT num_blue_potions FROM global_inventory"))
+        green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
+        green_potions = connection.execute(sqlalchemy.text("SELECT num_green_potions FROM global_inventory"))
 
-    ml = ml.first()[0]
-    potions = potions.first()[0]
+    red_ml = red_ml.first()[0]
+    red_potions = red_potions.first()[0]
+    blue_ml = blue_ml.first()[0]
+    blue_potions = blue_potions.first()[0]
+    green_ml = green_ml.first()[0]
+    green_potions = green_potions.first()[0]
 
-    print(type(ml))
+    #print(type(ml))
     for pot in potions_delivered:
-        print("type pot" + str(type(pot)))
-        ml_needed = ml_needed + pot.quantity * 100
-        potions_needed = potions_needed + pot.quantity
-
-    ml = ml - ml_needed
-    potions = potions + potions_needed
-
-    with db.engine.begin() as connection:
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(ml)))
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_potions = " + str(potions)))
-    
-    print(ml_needed)
+        if pot.potion_type[0] > 0:
+            print("red")
+            red_ml = red_ml - pot.quantity * 100 
+            red_potions = red_potions + pot.quantity
+            with db.engine.begin() as connection:
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(red_ml)))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_potions = " + str(red_potions)))
+        elif pot.potion_type[1] > 0:
+            print("green")
+            green_ml = green_ml - pot.quantity * 100 
+            green_potions = green_potions + pot.quantity
+            with db.engine.begin() as connection:
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = " + str(green_ml)))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_potions = " + str(green_potions))) 
+        elif pot.potion_type[2] > 0:
+            print("blue")
+            blue_ml = blue_ml - pot.quantity * 100 
+            blue_potions = blue_potions + pot.quantity
+            with db.engine.begin() as connection:
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = " + str(blue_ml)))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_potions = " + str(blue_potions)))
+        
 
     return "OK"
 
@@ -63,17 +81,32 @@ def get_bottle_plan():
     # Initial logic: bottle all barrels into red potions.
 
     with db.engine.begin() as connection:
-        ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
+        red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
+        blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
+        green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
 
-    ml = ml.first()[0]
-    num_potions = ml // 100
+    red_ml = red_ml.first()[0]
+    blue_ml = blue_ml.first()[0]
+    green_ml = green_ml.first()[0]
 
-    print("ml: " + str(ml))
+    num_red_potions = red_ml // 100
+    num_blue_potions = blue_ml // 100
+    num_green_potions = green_ml // 100
+
+    # print("ml: " + str(ml))
 
     return [
             {
                 "potion_type": [100, 0, 0, 0],
-                "quantity": num_potions,
+                "quantity": num_red_potions,
+            }, 
+            {
+                "potion_type": [0, 100, 0, 0],
+                "quantity": num_green_potions
+            },
+            {
+                "potion_type": [0, 0, 100, 0],
+                "quantity": num_blue_potions
             }
         ]
 

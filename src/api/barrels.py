@@ -117,6 +117,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
         if num_potions < 10:
             num_barrels = 1
         if barrel.sku == "SMALL_RED_BARREL" and (hour >= 0 and hour <= 7):
+            print("buying red barrel")
             which_barrel = 1
             barrels_delivered.append(
                 {
@@ -131,6 +132,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                 }
             ]
         elif barrel.sku == "SMALL_GREEN_BARREL" and (hour >= 8 and hour <= 15):
+            print("buying green barrel")
             which_barrel = 2
             return [
                 {
@@ -139,6 +141,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                 }
             ]
         elif barrel.sku == "SMALL_BLUE_BARREL" and (hour >= 16 and hour <= 23):
+            print("buying blue barrel")
             which_barrel = 0
             return [
                 {

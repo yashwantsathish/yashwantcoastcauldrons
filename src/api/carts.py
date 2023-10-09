@@ -36,6 +36,7 @@ class CartItem(BaseModel):
 def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
     """ """
     print("set item quantity")
+    print (str(cart_id) + ": " + item_sku)
     print(cart_item)
     cart_item.quantity = 1
     return "OK"

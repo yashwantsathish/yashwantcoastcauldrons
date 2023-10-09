@@ -11,14 +11,13 @@ router = APIRouter(
     dependencies=[Depends(auth.get_api_key)],
 )
 
-
 class NewCart(BaseModel):
     customer: str
 
 
 @router.post("/")
 def create_cart(new_cart: NewCart):
-    """ """
+    """ """    
     return {"cart_id": 1}
 
 

@@ -34,7 +34,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     barrel = barrels_delivered[0]
 
     if barrel.sku == "SMALL_GREEN_BARREL":
-        print("green")
+        print("barrel: green")
         with db.engine.begin() as connection:
             num_green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
         num_ml = num_green_ml.first()[0]
@@ -43,7 +43,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = " + str(num_ml)))
 
     elif barrel.sku == "SMALL_RED_BARREL":
-        print("red")
+        print("barrel: red")
         with db.engine.begin() as connection:
             num_red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
         num_ml = num_red_ml.first()[0]
@@ -51,7 +51,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         with db.engine.begin() as connection:
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(num_ml)))
     else:
-        print("blue")
+        print("barrel: blue")
         with db.engine.begin() as connection:
             num_blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
         num_ml = num_blue_ml.first()[0]
@@ -110,7 +110,8 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
    
     #Get current hour
     current_datetime = datetime.datetime.now()
-    hour = current_datetime.hour    
+    hour = current_datetime.hour   
+    print("hour: " + str(hour)) 
     
     for barrel in wholesale_catalog:
         if num_potions < 10:

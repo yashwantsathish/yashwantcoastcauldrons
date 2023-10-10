@@ -1,9 +1,13 @@
+import random
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel
 from src.api import auth
 
 import sqlalchemy
 from src import database as db
+
+ids = set()
+carts_dict = {}
 
 router = APIRouter(
     prefix="/carts",
@@ -19,13 +23,22 @@ class NewCart(BaseModel):
 def create_cart(new_cart: NewCart):
     """ """    
     print("create cart")
-    return {"cart_id": 1}
+
+    num = random.randint(1, 100) 
+    ids.add(num)
+
+    num = ids.pop()
+
+    print(ids)
+    
+    carts_dict[num] = []
+    return {"cart_id": num}
 
 
 @router.get("/{cart_id}")
 def get_cart(cart_id: int):
     """ """     
-    return {}
+    return carts_dict[cart_id]
 
 class CartItem(BaseModel):
     quantity: int
@@ -37,7 +50,9 @@ def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
     print("set item quantity")
     print (str(cart_id) + ": " + item_sku)
     print(cart_item)
+
     cart_item.quantity = 1
+    carts_dict[cart_id] = cart_item
     return "OK"
 
 

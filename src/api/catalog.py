@@ -14,6 +14,8 @@ def get_catalog():
     #Potion Catalog
     print("Catalog")
 
+    ret_list = []
+    
     with db.engine.begin() as connection:
         num_red_potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
         num_green_potions = connection.execute(sqlalchemy.text("SELECT num_green_potions FROM global_inventory"))
@@ -25,27 +27,38 @@ def get_catalog():
     # Can return a max of 6 unique skus.
     if  num_red_potions + num_green_potions + num_blue_potions == 0:
         return []
-    else:
-        return [
-                {
+
+    if(num_red_potions > 0):
+        ret_list.append(
+            {
                     "sku": "RED_POTION_0",
                     "name": "red potion",
                     "quantity": num_red_potions,
                     "price":  1,
                     "potion_type": [100, 0, 0, 0],
-                },
-                {
+            }
+                )
+    if(num_green_potions > 0):
+        ret_list.append(
+            {
                     "sku": "GREEN_POTION_0",
                     "name": "green potion",
                     "quantity": num_green_potions,
                     "price": 1,
                     "potion_type": [0, 100, 0, 0],
-                },
-                {
+            }
+        )
+    if(num_blue_potions > 0):
+        ret_list.append(
+            {
                     "sku": "BLUE_POTION_0",
                     "name": "blue potion",
                     "quantity": num_blue_potions,
                     "price": 1,
                     "potion_type": [0, 0, 100, 0],
-                }
-            ]
+            }
+        )
+    else:
+        return ret_list
+                
+            

@@ -31,7 +31,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     ml_needed = 0
     cost = 0
     num_ml = 0
-    
+
     print(barrels_delivered)
     barrel = barrels_delivered[0]
 
@@ -75,7 +75,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     cost = cost + barrel.price 
     print("barrel post: cost" + str(cost))
     
-    updated_gold = gold - cost
+    updated_gold = gold - .5 * cost
     
     with db.engine.begin() as connection:
         connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = " + str(updated_gold)))

@@ -148,7 +148,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "SMALL_BLUE_BARREL" and (index == 2):
+        elif barrel.sku == "SMALL_BLUE_BARREL" and (2 > 3):
             print("buying blue barrel")
             which_barrel = 0
             return [

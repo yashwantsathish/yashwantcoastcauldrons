@@ -26,63 +26,59 @@ class Barrel(BaseModel):
 @router.post("/deliver")
 def post_deliver_barrels(barrels_delivered: list[Barrel]):
     """ """
-    print("barrel post")
+    with db.engine.begin() as connection:
+        print("barrel post")
 
-    ml_needed = 0
-    cost = 0
-    num_ml = 0
+        ml_needed = 0
+        cost = 0
+        num_ml = 0
 
-    print(barrels_delivered)
-    barrel = barrels_delivered[0]
+        print(barrels_delivered)
+        barrel = barrels_delivered[0]
 
-    if barrel.sku == "SMALL_GREEN_BARREL":
-        print("barrel: green")
-        with db.engine.begin() as connection:
+        if barrel.sku == "SMALL_GREEN_BARREL":
+            print("barrel: green")
             num_green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
-        num_ml = num_green_ml.first()[0]
-        num_ml = num_ml + barrel.ml_per_barrel
-        print("green: " + str(num_ml))
-        with db.engine.begin() as connection:
+            num_ml = num_green_ml.first()[0]
+            num_ml = num_ml + barrel.ml_per_barrel
+            print("green: " + str(num_ml))
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = " + str(num_ml)))
 
-    elif barrel.sku == "SMALL_RED_BARREL":
-        print("barrel: red")
-        with db.engine.begin() as connection:
+        elif barrel.sku == "SMALL_RED_BARREL":
+            print("barrel: red")
             num_red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
-        num_ml = num_red_ml.first()[0]
-        num_ml = num_ml + barrel.ml_per_barrel
-        print("red: " + str(num_ml))
-        with db.engine.begin() as connection:
+            num_ml = num_red_ml.first()[0]
+            num_ml = num_ml + barrel.ml_per_barrel
+            print("red: " + str(num_ml))
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(num_ml)))
-    else:
-        print("barrel: blue")
-        with db.engine.begin() as connection:
+        else:
+            print("barrel: blue")
             num_blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
-        num_ml = num_blue_ml.first()[0]
-        num_ml = num_ml + barrel.ml_per_barrel
-        print("blue: " + str(num_ml))
-        with db.engine.begin() as connection:
+            num_ml = num_blue_ml.first()[0]
+            num_ml = num_ml + barrel.ml_per_barrel
+            print("blue: " + str(num_ml))
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = " + str(num_ml)))
 
-    #Retrieving values from Database
-    with db.engine.begin() as connection:
+        #Retrieving values from Database
+       
         gold = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
+        num_blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
 
-    # Getting retrieved value from tuple
-    gold = gold.first()[0]
-    print(gold)
+        # Getting retrieved value from tuple
+        num_blue_ml = num_blue_ml.first()[0]
+        print("blue (should be 500): " + str(num_blue_ml))
 
-    cost = cost + barrel.price 
-    print("barrel post: cost" + str(cost))
-    
-    updated_gold = gold - .5 * cost
-    
-    with db.engine.begin() as connection:
+        gold = gold.first()[0]
+        print(gold)
+
+        cost = cost + barrel.price 
+        print("barrel post cost: " + str(cost))
+        
+        updated_gold = gold - .5 * cost
+        
         connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = " + str(updated_gold)))
 
-    print("barrels delivered: " + str(ml_needed))
-
-    return "OK"
+        return "OK"
 
 
 # Gets called once a day
@@ -124,7 +120,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     for barrel in wholesale_catalog:
         if num_potions < 10:
             num_barrels = 1
-        if barrel.sku == "SMALL_RED_BARREL" and (index == 0):
+        if barrel.sku == "SMALL_RED_BARREL" and (index < 0):
             print("buying red barrel")
             which_barrel = 1
             barrels_delivered.append(
@@ -139,7 +135,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "SMALL_GREEN_BARREL" and (index == 1):
+        elif barrel.sku == "SMALL_GREEN_BARREL" and (index < 0):
             print("buying green barrel")
             which_barrel = 2
             return [
@@ -148,7 +144,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "SMALL_BLUE_BARREL" and (2 > 3):
+        elif barrel.sku == "SMALL_BLUE_BARREL" and (index >= 0):
             print("buying blue barrel")
             which_barrel = 0
             return [

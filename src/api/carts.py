@@ -83,19 +83,19 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     if num_red_potions >= 1:
         print("red bought")
         num_bought = num_bought + 1
-        gold_paid = gold_paid + 50
+        gold_paid = gold_paid + 1
         num_red_potions = num_red_potions - 1
 
     if num_green_potions >= 1:
         print("green bought")
         num_bought = num_bought + 1
-        gold_paid = gold_paid + 50
+        gold_paid = gold_paid + 1
         num_green_potions = num_green_potions - 1
 
     if num_blue_potions >= 1:
         print("blue bought")
         num_bought = num_bought + 1
-        gold_paid = gold_paid + 50
+        gold_paid = gold_paid + 1
         num_blue_potions = num_blue_potions - 1
 
     gold = gold + gold_paid

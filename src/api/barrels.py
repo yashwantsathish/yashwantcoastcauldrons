@@ -38,26 +38,20 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
 
         if barrel.sku == "SMALL_GREEN_BARREL":
             print("barrel: green")
-            num_green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
-            num_ml = num_green_ml.first()[0]
-            num_ml = num_ml + barrel.ml_per_barrel
+            num_ml = barrel.ml_per_barrel + barrel.quantity
             print("green: " + str(num_ml))
-            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = " + str(num_ml)))
+            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = num_green_ml + " + str(num_ml)))
 
         elif barrel.sku == "SMALL_RED_BARREL":
             print("barrel: red")
-            num_red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
-            num_ml = num_red_ml.first()[0]
-            num_ml = num_ml + barrel.ml_per_barrel
+            num_ml = barrel.ml_per_barrel * barrel.quantity
             print("red: " + str(num_ml))
-            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(num_ml)))
+            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = num_red_ml + " + str(num_ml)))
         else:
             print("barrel: blue")
-            num_blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
-            num_ml = num_blue_ml.first()[0]
-            num_ml = num_ml + barrel.ml_per_barrel
+            num_ml = barrel.ml_per_barrel + barrel.ml_per_barrel
             print("blue: " + str(num_ml))
-            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = " + str(num_ml)))
+            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = num_blue_ml + " + str(num_ml)))
 
         #Retrieving values from Database
        

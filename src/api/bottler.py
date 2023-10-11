@@ -43,10 +43,10 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
     for pot in potions_delivered:
         if pot.potion_type[0] > 0:
             print("red")
-            red_ml = red_ml - pot.quantity * 100 
+            red_ml = pot.quantity * 100 
             red_potions = red_potions + pot.quantity
             with db.engine.begin() as connection:
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(red_ml)))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = num_red_ml - " + str(red_ml)))
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_potions = " + str(red_potions)))
         elif pot.potion_type[1] > 0:
             print("green")

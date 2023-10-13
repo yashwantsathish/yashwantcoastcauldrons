@@ -24,6 +24,8 @@ def get_catalog():
     num_red_potions = num_red_potions.first()[0]
     num_green_potions = num_green_potions.first()[0]
     num_blue_potions = num_blue_potions.first()[0]
+
+    print("Catalog - red: " + str(num_red_potions) + " blue: " + str(num_blue_potions) + " green: " + str(num_green_potions))
     # Can return a max of 6 unique skus.
     if  num_red_potions + num_green_potions + num_blue_potions == 0:
         return []
@@ -58,7 +60,7 @@ def get_catalog():
                     "potion_type": [0, 0, 100, 0],
                 }
         )
-    else:
-        return ret_list
+    
+    return ret_list
                 
             

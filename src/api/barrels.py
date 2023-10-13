@@ -36,6 +36,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         print(barrels_delivered)
         barrel = barrels_delivered[0]
 
+        #Only if enough gold
         if barrel.sku == "SMALL_GREEN_BARREL":
             print("barrel: green")
             num_ml = barrel.ml_per_barrel + barrel.quantity
@@ -104,6 +105,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
 
     num_potions = num_red_potions + num_blue_potions + num_green_potions
    
+    print("current gold:" + money)
     #Get current hour
     # current_datetime = datetime.datetime.now()
     # hour = current_datetime.hour   

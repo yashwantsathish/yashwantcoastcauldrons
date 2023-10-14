@@ -23,16 +23,12 @@ class NewCart(BaseModel):
 def create_cart(new_cart: NewCart):
     """ """    
     print("create cart")
-
-    num = random.randint(1, 100) 
-    ids.add(num)
-
-    num = ids.pop()
-
-    print(ids)
     
-    carts_dict[num] = []
-    return {"cart_id": num}
+    with db.engine.begin() as connection:
+        id = connection.execute(sqlalchemy.text("INSERT INTO carts DEFAULT VALUES RETURNING id"))
+        connection.execute(sqlalchemy.text("INSERT INTO cart_items (cart_id) VALUES (" + str(id) + ")"))
+        
+    return {"cart_id": id}
 
 
 @router.get("/{cart_id}")
@@ -43,7 +39,7 @@ def get_cart(cart_id: int):
 class CartItem(BaseModel):
     quantity: int
 
-
+   
 @router.post("/{cart_id}/items/{item_sku}")
 def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
     """ """

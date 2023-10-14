@@ -105,7 +105,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
 
     num_potions = num_red_potions + num_blue_potions + num_green_potions
    
-    print("current gold:" + money)
+    print("current gold:" + str(money))
     #Get current hour
     # current_datetime = datetime.datetime.now()
     # hour = current_datetime.hour   

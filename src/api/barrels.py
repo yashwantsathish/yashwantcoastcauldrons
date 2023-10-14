@@ -50,7 +50,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = num_red_ml + " + str(num_ml)))
         else:
             print("barrel: blue")
-            num_ml = barrel.ml_per_barrel + barrel.ml_per_barrel
+            num_ml = barrel.ml_per_barrel + barrel.quantity
             print("blue: " + str(num_ml))
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = num_blue_ml + " + str(num_ml)))
 

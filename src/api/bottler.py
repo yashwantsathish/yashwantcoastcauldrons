@@ -89,7 +89,7 @@ def get_bottle_plan():
     green_ml = green_ml.first()[0]
     gold = gold.first()[0]
 
-    print("bottler- green ml: " + green_ml + ", red ml: " + red_ml + ", blue ml: " + blue_ml + ", gold: " + gold)
+    print("bottler- green ml: " + str(green_ml) + ", red ml: " + str(red_ml) + ", blue ml: " + str(blue_ml) + ", gold: " + str(gold))
     num_red_potions = red_ml // 100
     num_blue_potions = blue_ml // 100
     num_green_potions = green_ml // 100

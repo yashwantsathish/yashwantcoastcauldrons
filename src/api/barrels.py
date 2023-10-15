@@ -132,7 +132,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "SMALL_GREEN_BARREL" and (index < 0):
+        elif barrel.sku == "SMALL_GREEN_BARREL" and (index >= 0):
             print("buying green barrel")
             which_barrel = 2
             return [
@@ -141,7 +141,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "SMALL_BLUE_BARREL" and (index >= 0):
+        elif barrel.sku == "SMALL_BLUE_BARREL" and (index < 0):
             print("buying blue barrel")
             which_barrel = 0
             return [

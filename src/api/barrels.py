@@ -117,6 +117,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
 
     index = random.randint(0, 2)
     
+    
     for barrel in wholesale_catalog:
         if num_potions < 10:
             num_barrels = 1

@@ -82,12 +82,14 @@ def get_bottle_plan():
         red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
         blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
         green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
+        gold = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
 
     red_ml = red_ml.first()[0]
     blue_ml = blue_ml.first()[0]
     green_ml = green_ml.first()[0]
+    gold = gold.first()[0]
 
-    print("bottler- green ml: " + green_ml)
+    print("bottler- green ml: " + green_ml + ", red ml: " + red_ml + ", blue ml: " + blue_ml + ", gold: " + gold)
     num_red_potions = red_ml // 100
     num_blue_potions = blue_ml // 100
     num_green_potions = green_ml // 100

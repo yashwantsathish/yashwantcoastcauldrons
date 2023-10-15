@@ -39,7 +39,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         #Only if enough gold
         if barrel.sku == "SMALL_GREEN_BARREL":
             print("barrel: green")
-            num_ml = barrel.ml_per_barrel + barrel.quantity
+            num_ml = barrel.ml_per_barrel * barrel.quantity
             print("green: " + str(num_ml))
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = num_green_ml + " + str(num_ml)))
 

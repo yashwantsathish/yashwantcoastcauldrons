@@ -83,6 +83,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     global which_barrel 
     which_barrel = 0
 
+    print(wholesale_catalog)
     print("barrel plan")
     
     barrels_delivered = []

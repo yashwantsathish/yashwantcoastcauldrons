@@ -57,11 +57,11 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         #Retrieving values from Database
        
         gold = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
-        num_blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
+        num_green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
 
         # Getting retrieved value from tuple
-        num_blue_ml = num_blue_ml.first()[0]
-        print("blue (should be 500): " + str(num_blue_ml))
+        num_green_ml = num_green_ml.first()[0]
+        print("green (should be 500): " + str(num_green_ml))
 
         gold = gold.first()[0]
         print(gold)

@@ -21,8 +21,6 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
     """ """
     print("bottler post")
     print(potions_delivered)
-    ml_needed = 0
-    potions_needed = 0
 
     with db.engine.begin() as connection:
         red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
@@ -79,7 +77,7 @@ def get_bottle_plan():
     # Expressed in integers from 1 to 100 that must sum up to 100.
 
     # Initial logic: bottle all barrels into red potions.
-
+ 
     with db.engine.begin() as connection:
         red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
         blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
@@ -89,6 +87,7 @@ def get_bottle_plan():
     blue_ml = blue_ml.first()[0]
     green_ml = green_ml.first()[0]
 
+    print("bottler- green ml: " + green_ml)
     num_red_potions = red_ml // 100
     num_blue_potions = blue_ml // 100
     num_green_potions = green_ml // 100

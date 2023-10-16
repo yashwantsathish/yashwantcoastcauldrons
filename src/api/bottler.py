@@ -22,6 +22,9 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
     print("bottler post")
     print(potions_delivered)
 
+    if not potions_delivered:
+        return "OK"
+
     with db.engine.begin() as connection:
         red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
         blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
@@ -131,11 +134,14 @@ def get_bottle_plan():
 
         # print("ml: " + str(ml))
 
-        return [
-                {
-                    "potion_type": [50, 50, 0, 0],
-                    "quantity": 1,
-                }
-            ]
+        if red_ml >= 50 and green_ml >= 50:
+            return [
+                    {
+                        "potion_type": [50, 50, 0, 0],
+                        "quantity": 1,
+                    }
+                ]
+        else:
+            return []
 
 

@@ -29,7 +29,6 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     with db.engine.begin() as connection:
         print("barrel post")
 
-        ml_needed = 0
         cost = 0
         num_ml = 0
 
@@ -37,13 +36,13 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         barrel = barrels_delivered[0]
 
         #Only if enough gold
-        if barrel.sku == "SMALL_GREEN_BARREL":
+        if barrel.sku == "MINI_GREEN_BARREL":
             print("barrel: green")
             num_ml = barrel.ml_per_barrel * barrel.quantity
             print("green: " + str(num_ml))
             connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = num_green_ml + " + str(num_ml)))
 
-        elif barrel.sku == "SMALL_RED_BARREL":
+        elif barrel.sku == "MINI_RED_BARREL":
             print("barrel: red")
             num_ml = barrel.ml_per_barrel * barrel.quantity
             print("red: " + str(num_ml))
@@ -63,8 +62,8 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         # Getting retrieved value from tuple
         num_green_ml = num_green_ml.first()[0]
         num_red_ml = num_red_ml.first()[0]
-        print("green (should be 500): " + str(num_green_ml))
-        print("red (should be 500): " + str(num_red_ml))
+        print("green (should be 200): " + str(num_green_ml))
+        print("red (should be 200): " + str(num_red_ml))
 
         gold = gold.first()[0]
         print(gold)
@@ -83,15 +82,8 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
 @router.post("/plan")
 def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     """ """
-    print(wholesale_catalog)
     print("barrel plan")
-    
-    barrels_delivered = []
-
-    ml = 0
-    potion_type = 0
-    price = 0
-    num_barrels = 0
+    print(wholesale_catalog)
 
     with db.engine.begin() as connection:
         num_red_potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
@@ -112,41 +104,34 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     # hour = current_datetime.hour   
     # print("hour: " + str(hour)) 
 
-    index = random.randint(0, 2)
+    index = random.randint(0, 1)
     
     for barrel in wholesale_catalog:
-        if num_potions < 10:
+        if money >= 60:
             num_barrels = 1
-        if barrel.sku == "SMALL_RED_BARREL" and (index >= 0):
+        if barrel.sku == "MINI_RED_BARREL" and (index == 0):
             print("buying red barrel")
-            which_barrel = 1
-            barrels_delivered.append(
-                {
-                    "sku": barrel.sku,
-                    "quantity": num_barrels, 
-                }       
-            )
             return [
                 {
-                    "sku": "SMALL_RED_BARREL",
+                    "sku": "MINI_RED_BARREL",
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "SMALL_GREEN_BARREL" and (index < 0):
+        elif barrel.sku == "MINI_GREEN_BARREL" and (index == 1):
             print("buying green barrel")
             which_barrel = 2
             return [
                 {
-                    "sku": "SMALL_GREEN_BARREL",
+                    "sku": "MINI_GREEN_BARREL",
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "SMALL_BLUE_BARREL" and (index < 0):
+        elif barrel.sku == "MINI_BLUE_BARREL" and (index < 0):
             print("buying blue barrel")
             which_barrel = 0
             return [
                 {
-                    "sku": "SMALL_BLUE_BARREL",
+                    "sku": "MINI_BLUE_BARREL",
                     "quantity": 1,
                 }
             ]

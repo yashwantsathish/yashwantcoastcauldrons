@@ -35,6 +35,7 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
         green_ml = green_ml.first()[0]
 
         print("bottler post green: " + str(green_ml))
+        print("bottler post red: " + str(red_ml))
 
         to_make_red_ml = potions_delivered[0].potion_type[0]
         to_make_green_ml = potions_delivered[0].potion_type[1]

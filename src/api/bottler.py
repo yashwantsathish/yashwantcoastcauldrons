@@ -42,6 +42,7 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
         to_make_blue_ml = potions_delivered[0].potion_type[2]
 
         print("to make green ml: " + str(to_make_green_ml))
+        print("to make red ml: " + str(to_make_red_ml))
 
         connection.execute(sqlalchemy.text("UPDATE potions SET quantity = quantity + 1 WHERE " \
                                            "num_red = :to_make_red_ml and num_green = :to_make_green_ml " \

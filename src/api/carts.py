@@ -29,6 +29,7 @@ def create_cart(new_cart: NewCart):
         id = id.first()[0]
         connection.execute(sqlalchemy.text("INSERT INTO cart_items (cart_id) VALUES (" + str(id) + ")"))
 
+    print("cart id: " + id)
     return {"cart_id": id}
 
 @router.get("/{cart_id}")

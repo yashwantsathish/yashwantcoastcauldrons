@@ -17,49 +17,27 @@ def get_catalog():
     ret_list = []
 
     with db.engine.begin() as connection:
-        num_red_potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
-        num_green_potions = connection.execute(sqlalchemy.text("SELECT num_green_potions FROM global_inventory"))
-        num_blue_potions = connection.execute(sqlalchemy.text("SELECT num_blue_potions FROM global_inventory"))
+        num_green = connection.execute(sqlalchemy.text("SELECT quantity FROM potions " \
+                                                               "WHERE sku = 'green'"))
         num_green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
         
-    num_red_potions = num_red_potions.first()[0]
-    num_green_potions = num_green_potions.first()[0]
-    num_blue_potions = num_blue_potions.first()[0]
+    num_green = num_green.first()[0]
     num_green_ml = num_green_ml.first()[0]
 
-    print("Catalog - red: " + str(num_red_potions) + " blue: " + str(num_blue_potions) + " green: " + str(num_green_potions) + " gml: " + str(num_green_ml))
+    print("Catalog - green: " + str(num_green) + " gml: " + str(num_green_ml))
+    
     # Can return a max of 6 unique skus.
-    if  num_red_potions + num_green_potions + num_blue_potions == 0:
+    if num_green == 0:
         return []
 
-    if(num_red_potions > 0):
+    if(num_green > 0):
         ret_list.append(
                 {
-                    "sku": "RED_POTION_0",
-                    "name": "red potion",
-                    "quantity": num_red_potions,
-                    "price":  1,
-                    "potion_type": [100, 0, 0, 0],
-                }
-        )
-    if(num_green_potions > 0):
-        ret_list.append(
-                {
-                    "sku": "GREEN_POTION_0",
-                    "name": "green potion",
-                    "quantity": num_green_potions,
-                    "price": 1,
+                    "sku": "green",
+                    "name": "green",
+                    "quantity": num_green,
+                    "price":  50,
                     "potion_type": [0, 100, 0, 0],
-                }
-        )
-    if(num_blue_potions > 0):
-        ret_list.append(
-                {
-                    "sku": "BLUE_POTION_0",
-                    "name": "blue potion",
-                    "quantity": num_blue_potions,
-                    "price": 1,
-                    "potion_type": [0, 0, 100, 0],
                 }
         )
     

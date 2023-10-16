@@ -113,7 +113,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     for barrel in wholesale_catalog:
         if money >= 60:
             num_barrels = 1
-        if barrel.sku == "MINI_RED_BARREL" and (index == 0):
+        if barrel.sku == "MINI_RED_BARREL" and (index >= 0):
             print("buying mini red barrel")
             return [
                 {
@@ -121,7 +121,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "MINI_GREEN_BARREL" and (index == 1):
+        elif barrel.sku == "MINI_GREEN_BARREL" and (index < 0):
             print("buying mini green barrel")
             which_barrel = 2
             return [
@@ -130,7 +130,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "MINI_BLUE_BARREL" and (index == 2):
+        elif barrel.sku == "MINI_BLUE_BARREL" and (index < 0):
             print("buying mini blue barrel")
             which_barrel = 0
             return [

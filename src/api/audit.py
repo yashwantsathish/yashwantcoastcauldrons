@@ -17,27 +17,23 @@ def get_inventory():
     """ """
     print("audit")
     with db.engine.begin() as connection:
-        num_red_potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
-        num_green_potions = connection.execute(sqlalchemy.text("SELECT num_green_potions FROM global_inventory"))
-        num_blue_potions = connection.execute(sqlalchemy.text("SELECT num_blue_potions FROM global_inventory"))
+        potions = connection.execute(sqlalchemy.text("SELECT quantity FROM potions"))
 
-        red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
-        blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
-        green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
+        ml = connection.execute(sqlalchemy.text("SELECT num_red_ml, num_blue_ml, num_green_ml FROM global_inventory"))
 
         gold = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
 
-    num_red_potions = num_red_potions.first()[0]
-    num_green_potions = num_green_potions.first()[0]
-    num_blue_potions = num_blue_potions.first()[0]
-    num_potions = num_red_potions + num_green_potions + num_blue_potions
+    num_potions = 0
+    for row in potions:
+        num_potions += row.quantity
 
-    red_ml = red_ml.first()[0]
-    blue_ml = blue_ml.first()[0]
-    green_ml = green_ml.first()[0]
-    num_ml = red_ml + green_ml + blue_ml
-
+    num_ml = 0
+    for row in ml:
+        num_ml += row.num_red_ml + row.num_green_ml + row.num_blue_ml  
+    
     gold = gold.first()[0]
+
+    print("Audit- " + "number_of_potions: " + str(num_potions) + " ml_in_barrels: " + str(num_ml) + " gold: " + str(gold))
 
     return {"number_of_potions": num_potions, "ml_in_barrels": num_ml, "gold": gold}
 

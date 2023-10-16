@@ -54,7 +54,7 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
                                            "num_green_ml = num_green_ml - :to_make_green_ml," \
                                            "num_blue_ml = num_blue_ml - :to_make_blue_ml"), 
                                            {    
-                                                "to_make_red_ml": to_make_blue_ml,
+                                                "to_make_red_ml": to_make_red_ml,
                                                 "to_make_green_ml": to_make_green_ml,
                                                 "to_make_blue_ml": to_make_blue_ml
                                            }
@@ -119,7 +119,6 @@ def get_bottle_plan():
         query = connection.execute(sqlalchemy.text("SELECT sku FROM potions ORDER BY quantity LIMIT 1"))
         query = query.first()[0]
         
-        
         # red_ml = red_ml.first()[0]
         # blue_ml = blue_ml.first()[0]
         # green_ml = green_ml.first()[0]
@@ -134,7 +133,7 @@ def get_bottle_plan():
 
         return [
                 {
-                    "potion_type": [0, 100, 0, 0],
+                    "potion_type": [50, 50, 0, 0],
                     "quantity": 1,
                 }
             ]

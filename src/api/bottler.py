@@ -121,10 +121,27 @@ def get_bottle_plan():
 
         # print(num_green_potions)
 
-        query = connection.execute(sqlalchemy.text("SELECT sku FROM potions ORDER BY quantity LIMIT 1"))
-        query = query.first()[0]
+        query = connection.execute(sqlalchemy.text("SELECT * FROM potions " \
+                                                   "WHERE :red_ml >= num_red " \
+                                                   "AND :green_ml >= num_green " \
+                                                   "AND :blue_ml >= num_blue " \
+                                                   "ORDER BY quantity LIMIT 1"),
+                                                   {
+                                                       "red_ml": red_ml,
+                                                       "green_ml": green_ml,
+                                                       "blue_ml": blue_ml,
+                                                   })
         
+        query = query.first()
+        if query is None:
+            return []
+        query_sku = query.sku
+        query_red = query.num_red
+        query_green = query.num_green
+        query_blue = query.num_blue
         
+
+        print(str(query_sku) + ": [" + str(query_red) + ", " + str(query_green) + ", " + str(query_blue) + "]")
         # red_ml = red_ml.first()[0]
         # blue_ml = blue_ml.first()[0]
         # green_ml = green_ml.first()[0]
@@ -136,22 +153,12 @@ def get_bottle_plan():
         # num_green_potions = green_ml // 100
 
         # print("ml: " + str(ml))
-
-        if red_ml >= 50 and green_ml >= 50:
-            return [
+      
+        return [
                     {
-                        "potion_type": [50, 50, 0, 0],
-                        "quantity": 1,
-                    }
-                ]
-        elif green_ml >= 50:
-            return [
-                    {
-                        "potion_type": [0, 100, 0, 0],
+                        "potion_type": [query_red, query_green, query_blue, 0],
                         "quantity": 1,
                     }
             ]
-        else:
-            return []
 
 

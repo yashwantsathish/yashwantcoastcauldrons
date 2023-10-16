@@ -25,11 +25,14 @@ def create_cart(new_cart: NewCart):
     print("create cart")
     
     with db.engine.begin() as connection:
-        id = connection.execute(sqlalchemy.text("INSERT INTO carts DEFAULT VALUES RETURNING id"))
+        name = new_cart.customer
+        id = connection.execute(sqlalchemy.text("INSERT INTO carts (name) VALUES(:name) RETURNING id"), 
+                                {
+                                    "name": name
+                                })
         id = id.first()[0]
-        connection.execute(sqlalchemy.text("INSERT INTO cart_items (cart_id) VALUES (" + str(id) + ")"))
 
-    print("cart id: " + id)
+    print("cart id: " + str(id))
     return {"cart_id": id}
 
 @router.get("/{cart_id}")
@@ -48,24 +51,15 @@ def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
     print (str(cart_id) + ": " + item_sku + ", " + str(cart_item.quantity))
     print(cart_item)
 
-    cart_item.quantity = 1
-
     with db.engine.begin() as connection:
-        connection.execute(sqlalchemy.text("UPDATE cart_items SET quantity = quantity + 1 " \
-                                           "WHERE cart_id = :cart_id"),
-                                           {
-                                               "cart_id": cart_id
-                                           }
-                                           )
-        
-        connection.execute(sqlalchemy.text("UPDATE cart_items SET potion_id = potions.id " \
-                                            "FROM potions " \
-                                            "WHERE sku = :item_sku"), 
-                                            {
-                                                "item_sku": item_sku
-                                            })
-                                           
-    #carts_dict[cart_id] = cart_item
+        connection.execute(sqlalchemy.text("INSERT INTO cart_items (cart_id, quantity, potion_id) " \
+                                           "SELECT :id, :quantity, id " \
+                                           "FROM potions WHERE sku = :item_sku"),  
+                    {
+                        "id": cart_id,
+                        "quantity": cart_item.quantity, 
+                        "item_sku": item_sku
+                    })
 
     return "OK"
 
@@ -86,7 +80,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
         query = connection.execute(sqlalchemy.text("SELECT potion_id, quantity FROM cart_items " \
                                                    "WHERE cart_id = :cart_id"),
                                                    {
-                                                       "cart_id":cart_id
+                                                       "cart_id": cart_id
                                                    })
         
         gold = connection.execute(sqlalchemy.text("SELECT gold from global_inventory"))
@@ -110,6 +104,6 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                            {
                                "gold": gold
                            })
-
+        
         return {"total_potions_bought": num_bought, "total_gold_paid": gold_paid}
 

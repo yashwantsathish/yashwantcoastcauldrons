@@ -140,7 +140,6 @@ def get_bottle_plan():
         query_green = query.num_green
         query_blue = query.num_blue
         
-
         print(str(query_sku) + ": [" + str(query_red) + ", " + str(query_green) + ", " + str(query_blue) + "]")
         # red_ml = red_ml.first()[0]
         # blue_ml = blue_ml.first()[0]

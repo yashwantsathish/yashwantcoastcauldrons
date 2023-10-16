@@ -124,6 +124,7 @@ def get_bottle_plan():
         query = connection.execute(sqlalchemy.text("SELECT sku FROM potions ORDER BY quantity LIMIT 1"))
         query = query.first()[0]
         
+        
         # red_ml = red_ml.first()[0]
         # blue_ml = blue_ml.first()[0]
         # green_ml = green_ml.first()[0]

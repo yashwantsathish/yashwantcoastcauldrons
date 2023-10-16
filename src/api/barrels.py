@@ -58,12 +58,16 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         gold = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
         num_green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
         num_red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
+        num_blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
 
         # Getting retrieved value from tuple
         num_green_ml = num_green_ml.first()[0]
         num_red_ml = num_red_ml.first()[0]
+        num_blue_ml = num_blue_ml.first()[0]
+
         print("green (should be 200): " + str(num_green_ml))
         print("red (should be 200): " + str(num_red_ml))
+        print("blue (should be 200): " + str(num_blue_ml))
 
         gold = gold.first()[0]
         print(gold)
@@ -104,7 +108,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     # hour = current_datetime.hour   
     # print("hour: " + str(hour)) 
 
-    index = random.randint(0, 1)
+    index = random.randint(0, 2)
     
     for barrel in wholesale_catalog:
         if money >= 60:
@@ -126,7 +130,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             ]
-        elif barrel.sku == "MINI_BLUE_BARREL" and (index < 0):
+        elif barrel.sku == "MINI_BLUE_BARREL" and (index == 2):
             print("buying mini blue barrel")
             which_barrel = 0
             return [

@@ -139,7 +139,7 @@ def get_bottle_plan():
         if red_ml >= 50 and green_ml >= 50:
             return [
                     {
-                        "potion_type": [100 , 50, 0, 0],
+                        "potion_type": [50, 50, 0, 0],
                         "quantity": 1,
                     }
                 ]

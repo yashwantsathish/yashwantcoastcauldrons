@@ -89,6 +89,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     print("barrel plan")
     print(wholesale_catalog)
 
+    ret_list = []
     with db.engine.begin() as connection:
         num_red_potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
         money = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
@@ -111,25 +112,26 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     index = random.randint(0, 2)
     
     for barrel in wholesale_catalog:
-        if money >= 60:
-            num_barrels = 1
-        if barrel.sku == "MINI_RED_BARREL" and (index < 0):
+        if money < 60:
+            return ret_list
+        if barrel.sku == "MINI_RED_BARREL" and (index >= 0):
             print("buying mini red barrel")
-            return [
+            money = money - 60
+            ret_list.append(
                 {
                     "sku": "MINI_RED_BARREL",
                     "quantity": 1,
                 }
-            ]
+            )
         elif barrel.sku == "MINI_GREEN_BARREL" and (index >= 0):
             print("buying mini green barrel")
-            which_barrel = 2
-            return [
+            money = money - 60
+            ret_list.append(
                 {
                     "sku": "MINI_GREEN_BARREL",
                     "quantity": 1,
                 }
-            ]
+            )      
         elif barrel.sku == "MINI_BLUE_BARREL" and (index < 0):
             print("buying mini blue barrel")
             which_barrel = 0

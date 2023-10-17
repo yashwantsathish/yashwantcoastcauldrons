@@ -77,7 +77,8 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     gold_paid = 0
 
     with db.engine.begin() as connection:
-        query = connection.execute(sqlalchemy.text("SELECT potion_id, quantity FROM cart_items " \
+        query = connection.execute(sqlalchemy.text("SELECT potion_id, cart_items.quantity, potions.price FROM cart_items " \
+                                                   "JOIN potions ON potion_id = potions.id " \
                                                    "WHERE cart_id = :cart_id"),
                                                    {
                                                        "cart_id": cart_id
@@ -88,7 +89,8 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
 
         for row in query:
             id = row.potion_id
-            print("potion id: " + str(id))
+            price = row.price
+            print("potion id: " + str(id) + " price: " + str(price))
             quant = row.quantity
             num_bought += quant
             connection.execute(sqlalchemy.text("UPDATE potions SET quantity = quantity - :quant " \
@@ -97,13 +99,13 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                                    "quant": quant,
                                                    "id": id
                                                })
-            gold_paid += 50*quant
+            gold_paid += price * quant
         
         gold = gold + gold_paid
         connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = :gold"),
                            {
                                "gold": gold
                            })
-        
+
         return {"total_potions_bought": num_bought, "total_gold_paid": gold_paid}
 

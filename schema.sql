@@ -7,6 +7,7 @@ create table
     num_blue integer null,
     num_dark integer null,
     quantity integer null,
+    price integer null,
     constraint potions_pkey primary key (id)
   ) tablespace pg_default;
 

@@ -21,16 +21,19 @@ def get_catalog():
                                                                "WHERE sku = 'green'"))
         num_yellow = connection.execute(sqlalchemy.text("SELECT quantity FROM potions " \
                                                                "WHERE sku = 'yellow'"))
+        num_red = connection.execute(sqlalchemy.text("SELECT quantity FROM potions " \
+                                                               "WHERE sku = 'red'"))
         num_green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
         
     num_green = num_green.first()[0]
+    num_red = num_red.first()[0]
     num_yellow = num_yellow.first()[0]
     num_green_ml = num_green_ml.first()[0]
 
     print("Catalog - green: " + str(num_green) + " gml: " + str(num_green_ml))
     
     # Can return a max of 6 unique skus.
-    if num_green + num_yellow == 0:
+    if num_green + num_yellow + num_red == 0:
         return []
 
     if num_green > 0:
@@ -51,6 +54,17 @@ def get_catalog():
                     "quantity": num_yellow,
                     "price": 1,
                     "potion_type": [50, 50, 0, 0],
+                }
+        )
+    
+    if num_red > 0:
+        ret_list.append(
+                {
+                    "sku": "red",
+                    "name": "red",
+                    "quantity": num_red,
+                    "price": 50,
+                    "potion_type": [100, 0, 0, 0],
                 }
         )
 

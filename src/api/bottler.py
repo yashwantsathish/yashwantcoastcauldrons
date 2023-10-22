@@ -137,7 +137,7 @@ def get_bottle_plan():
         # Iterate through the values
         for value in values:
             if value > 0:
-                if min_value is 0 or value < min_value:
+                if min_value == 0 or value < min_value:
                     min_value = value
       
         print(str(query_sku) + ": [" + str(query_red) + ", " + str(query_green) + ", " + str(query_blue) + "]")

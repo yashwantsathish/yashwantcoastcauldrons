@@ -20,6 +20,7 @@ def get_catalog():
         ids = connection.execute(sqlalchemy.text("SELECT DISTINCT potion_id FROM pot_ledgers"))
         ids = ids.first()
         if ids is None:
+            print("Catalog: None")
             return ret_list
         print(ids)
         for id in ids:

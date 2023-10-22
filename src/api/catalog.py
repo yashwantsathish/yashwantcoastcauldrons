@@ -18,8 +18,9 @@ def get_catalog():
 
     with db.engine.begin() as connection:
         ids = connection.execute(sqlalchemy.text("SELECT DISTINCT potion_id FROM pot_ledgers"))
-
         ids = ids.first()
+        if ids is None:
+            return ret_list
         print(ids)
         for id in ids:
             quant = connection.execute(sqlalchemy.text("SELECT SUM(potions_changed) FROM pot_ledgers "\

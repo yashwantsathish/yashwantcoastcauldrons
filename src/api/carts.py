@@ -77,34 +77,33 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     gold_paid = 0
 
     with db.engine.begin() as connection:
+        # Getting potion_id, quantity, price columns for given cart items
         query = connection.execute(sqlalchemy.text("SELECT potion_id, cart_items.quantity, potions.price FROM cart_items " \
                                                    "JOIN potions ON potion_id = potions.id " \
                                                    "WHERE cart_id = :cart_id"),
                                                    {
                                                        "cart_id": cart_id
                                                    })
-        
-        gold = connection.execute(sqlalchemy.text("SELECT gold from global_inventory"))
-        gold = gold.first()[0]
-
+        # Iterating through all cart items for given cart
         for row in query:
             id = row.potion_id
             price = row.price
             print("potion id: " + str(id) + " price: " + str(price))
             quant = row.quantity
             num_bought += quant
-            connection.execute(sqlalchemy.text("UPDATE potions SET quantity = quantity - :quant " \
-                                               "WHERE id = :id"),
+            
+            connection.execute(sqlalchemy.text("INSERT INTO pot_ledgers (potion_id, potions_changed) " \
+                                               "VALUES (:id, -:quant) "),
                                                {
-                                                   "quant": quant,
-                                                   "id": id
+                                                   "id": id,
+                                                   "quant": quant
                                                })
             gold_paid += price * quant
         
-        gold = gold + gold_paid
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = :gold"),
+        # gold = gold + gold_paid
+        connection.execute(sqlalchemy.text("INSERT INTO ledger (gold_change) VALUES (:gold_paid)"), 
                            {
-                               "gold": gold
+                               "gold_paid": gold_paid
                            })
 
         return {"total_potions_bought": num_bought, "total_gold_paid": gold_paid}

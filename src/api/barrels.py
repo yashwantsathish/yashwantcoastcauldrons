@@ -29,36 +29,51 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     with db.engine.begin() as connection:
         print("barrel post")
 
-        cost = 0
-        num_ml = 0
-
         print(barrels_delivered)
-        barrel = barrels_delivered[0]
 
-        #Only if enough gold
-        if barrel.sku == "MINI_GREEN_BARREL":
-            print("barrel: green")
-            num_ml = barrel.ml_per_barrel * barrel.quantity
-            print("green: " + str(num_ml))
-            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = num_green_ml + " + str(num_ml)))
+        for barrel in barrels_delivered:
+            #Only if enough gold
+            if barrel.sku == "MINI_GREEN_BARREL":
+                print("barrel: green")
+                num_ml = barrel.ml_per_barrel * barrel.quantity
+                print("green: " + str(num_ml))
+                connection.execute(sqlalchemy.text("INSERT INTO ledger (green_ml_change) VALUES (:num_ml)"),
+                                {
+                                    "num_ml": num_ml
+                                })
 
-        elif barrel.sku == "MINI_RED_BARREL":
-            print("barrel: red")
-            num_ml = barrel.ml_per_barrel * barrel.quantity
-            print("red: " + str(num_ml))
-            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = num_red_ml + " + str(num_ml)))
-        else:
-            print("barrel: blue")
-            num_ml = barrel.ml_per_barrel * barrel.quantity
-            print("blue: " + str(num_ml))
-            connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = num_blue_ml + " + str(num_ml)))
-
-        #Retrieving values from Database
-       
-        gold = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
-        num_green_ml = connection.execute(sqlalchemy.text("SELECT num_green_ml FROM global_inventory"))
-        num_red_ml = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
-        num_blue_ml = connection.execute(sqlalchemy.text("SELECT num_blue_ml FROM global_inventory"))
+            elif barrel.sku == "MINI_RED_BARREL":
+                print("barrel: red")
+                num_ml = barrel.ml_per_barrel * barrel.quantity
+                print("red: " + str(num_ml))
+                connection.execute(sqlalchemy.text("INSERT INTO ledger (red_ml_change) VALUES (:num_ml)"),
+                                {
+                                    "num_ml": num_ml
+                                })
+                
+            elif barrel.sku == "MINI_BLUE_BARREL":
+                print("barrel: blue")
+                num_ml = barrel.ml_per_barrel * barrel.quantity
+                print("blue: " + str(num_ml))
+                connection.execute(sqlalchemy.text("INSERT INTO ledger (blue_ml_change) VALUES (:num_ml)"),
+                                {
+                                    "num_ml": num_ml
+                                })
+                
+            #Retrieving values from Database
+            cost = 0
+            cost += barrel.price 
+            print("barrel post cost: " + str(cost))
+            
+            connection.execute(sqlalchemy.text("INSERT INTO ledger (gold_change) VALUES (-:cost)"),
+                                {
+                                    "cost": cost
+                                })
+        
+        gold = connection.execute(sqlalchemy.text("SELECT SUM(gold_change) FROM ledger"))
+        num_green_ml = connection.execute(sqlalchemy.text("SELECT SUM(green_ml_change) FROM ledger"))
+        num_red_ml = connection.execute(sqlalchemy.text("SELECT SUM(red_ml_change) FROM ledger"))
+        num_blue_ml = connection.execute(sqlalchemy.text("SELECT SUM(blue_ml_change) FROM ledger"))
 
         # Getting retrieved value from tuple
         num_green_ml = num_green_ml.first()[0]
@@ -70,14 +85,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         print("blue (should be 200): " + str(num_blue_ml))
 
         gold = gold.first()[0]
-        print(gold)
-
-        cost = cost + barrel.price 
-        print("barrel post cost: " + str(cost))
-        
-        updated_gold = gold - cost
-        
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = " + str(updated_gold)))
+        print(gold)    
 
         return "OK"
 
@@ -90,31 +98,19 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     print(wholesale_catalog)
 
     ret_list = []
+
     with db.engine.begin() as connection:
-        num_red_potions = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
-        money = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
-        num_green_potions = connection.execute(sqlalchemy.text("SELECT num_green_potions FROM global_inventory"))
-        num_blue_potions = connection.execute(sqlalchemy.text("SELECT num_blue_potions FROM global_inventory"))
-
-    num_red_potions = num_red_potions.first()[0]
+          money = connection.execute(sqlalchemy.text("SELECT SUM(gold_change) FROM ledger"))
+    
     money = money.first()[0]
-    num_green_potions = num_green_potions.first()[0]
-    num_blue_potions = num_blue_potions.first()[0]
 
-    num_potions = num_red_potions + num_blue_potions + num_green_potions
-   
     print("current gold:" + str(money))
-    #Get current hour
-    # current_datetime = datetime.datetime.now()
-    # hour = current_datetime.hour   
-    # print("hour: " + str(hour)) 
-
-    index = random.randint(0, 2)
     
     for barrel in wholesale_catalog:
+        print(money)
         if money < 60:
             return ret_list
-        if barrel.sku == "MINI_RED_BARREL" and (index >= 0):
+        if barrel.sku == "MINI_RED_BARREL":
             print("buying mini red barrel")
             money = money - 60
             ret_list.append(
@@ -123,7 +119,8 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "quantity": 1,
                 }
             )
-        elif barrel.sku == "MINI_GREEN_BARREL" and (index >= 0):
+
+        elif barrel.sku == "MINI_GREEN_BARREL":
             print("buying mini green barrel")
             money = money - 60
             ret_list.append(
@@ -131,14 +128,17 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     "sku": "MINI_GREEN_BARREL",
                     "quantity": 1,
                 }
-            )      
-        elif barrel.sku == "MINI_BLUE_BARREL" and (index < 0):
+            )    
+              
+        elif barrel.sku == "MINI_BLUE_BARREL":
             print("buying mini blue barrel")
-            which_barrel = 0
-            return [
+            money = money - 60
+            ret_list.append(
                 {
                     "sku": "MINI_BLUE_BARREL",
                     "quantity": 1,
                 }
-            ]
+            )
+    
+    return ret_list
     

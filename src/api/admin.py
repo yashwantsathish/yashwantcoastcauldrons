@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel
-from src.api import auth
+from src.api import auth   
 
 import sqlalchemy
 from src import database as db
@@ -19,21 +19,13 @@ def reset():
     """
 
     with db.engine.begin() as connection:
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = " + str(100)))
 
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_potions = " + str(0)))
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = " + str(0)))
-
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_potions = " + str(0)))
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = " + str(0)))
-
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_potions = " + str(0)))
-        connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = " + str(0)))
-
-        connection.execute(sqlalchemy.text("UPDATE potions SET quantity = 0"))
+        connection.execute(sqlalchemy.text("TRUNCATE ledger"))
+        connection.execute(sqlalchemy.text("TRUNCATE pot_ledgers CASCADE"))
         connection.execute(sqlalchemy.text("TRUNCATE carts CASCADE"))
 
-
+        connection.execute(sqlalchemy.text("INSERT INTO ledger (gold_change) VALUES (100)"))    
+        
     return "OK"
 
 

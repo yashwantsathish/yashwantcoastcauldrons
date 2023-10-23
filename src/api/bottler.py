@@ -114,6 +114,7 @@ def get_bottle_plan():
         
         query = query.first()
         if query is None:
+            print("No bottles to be bottled")
             return []
         query_sku = query.sku
         query_red = query.num_red
@@ -140,7 +141,7 @@ def get_bottle_plan():
                 if min_value == 0 or value < min_value:
                     min_value = value
       
-        print(str(query_sku) + ": [" + str(query_red) + ", " + str(query_green) + ", " + str(query_blue) + "]")
+        print("Bottler plan:" + str(query_sku) + ": [" + str(query_red) + ", " + str(query_green) + ", " + str(query_blue) + "]")
 
         return [
                     {

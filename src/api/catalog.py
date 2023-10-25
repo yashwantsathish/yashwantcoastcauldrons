@@ -24,7 +24,7 @@ def get_catalog():
         
         for id in ids:
             id_num = id.potion_id
-            print(id_num)
+            print("Catalog Potion: " + str(id_num))
             quant = connection.execute(sqlalchemy.text("SELECT SUM(potions_changed) FROM pot_ledgers "\
                                                        "WHERE potion_id = :id_num"),
                                                        {

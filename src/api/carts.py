@@ -59,20 +59,74 @@ def search_orders(
     time is 5 total line items.
     """
 
-    return {
-        "previous": "",
-        "next": "",
-        "results": [
-            {
-                "line_item_id": 1,
-                "item_sku": "1 oblivion potion",
-                "customer_name": "Fighter",
-                "line_item_total": 50,
-                "timestamp": "2021-01-01T00:00:00Z",
-            }
-        ],
-    }
+    #search_page
 
+    curr_index = search_page
+    if search_page == "":
+        curr_index = 0
+    
+    if sort_col == search_sort_options.customer_name:
+        sorter = "name"
+    
+    elif sort_col == search_sort_options.item_sku:
+        sorter = "sku"
+
+    elif sort_col == search_sort_options.line_item_total:
+        sorter = "price"
+    
+
+    if sort_order == search_sort_order.asc:
+        order = "ASC"
+
+    elif sort_order == search_sort_order.desc:
+        order = "DESC"
+
+    # Get customer name (carts name), item sku (potions), quantity (cart_items), gold (price potions table)
+    with db.engine.begin() as connection:
+        query = connection.execute(sqlalchemy.text("SELECT name, cart_items.quantity, potions.sku, potions.price FROM carts " \
+                                           "JOIN cart_items on carts.id = cart_items.cart_id " \
+                                           "JOIN potions on potions.id = cart_items.potion_id " \
+                                            "WHERE carts.name ILIKE :customer_name || '%' " \
+                                            "AND potions.sku ILIKE :potion_sku || '%' " \
+                                            f"ORDER BY {sorter} {order}"), 
+                                            {
+                                                "customer_name": customer_name,
+                                                "potion_sku": potion_sku, 
+                                            })
+        
+        query = query.fetchall()
+
+        query_len = len(query)
+        curr_index = int(curr_index)
+        if query_len > curr_index + 5:
+            next_index = curr_index + 5
+            prev_index = curr_index
+            if prev_index == 0:
+                prev_index = ""
+        else:
+            prev_index = ""
+            next_index = ""
+
+        display_list = []
+
+        for i in range(curr_index, min(curr_index + 5, query_len)):
+            row = query[i]
+            display_list.append(
+                {
+                    "line_item_id": i,
+                    "item_sku": row.sku,
+                    "customer_name": row.name,
+                    "line_item_total": row.price * row.quantity,
+                    "timestamp": "2021-01-01T00:00:00Z",
+                }
+            )
+
+
+    return {
+        "previous": prev_index,
+        "next": next_index,
+        "results": display_list,
+    }
 
 class NewCart(BaseModel):
     customer: str

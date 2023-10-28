@@ -62,7 +62,7 @@ def search_orders(
     #search_page
 
     # Set Current Index
-    curr_index = int(search_page) if search_page else 0
+    curr_index = int(search_page) if search_page else 1
     
     # Find what to sort by
     if sort_col == search_sort_options.customer_name:
@@ -110,7 +110,7 @@ def search_orders(
         display_list = []
 
         for i in range(curr_index, min(curr_index + 5, query_len)):
-            row = query[i]
+            row = query[i-1]
             display_list.append(
                 {
                     "line_item_id": i,

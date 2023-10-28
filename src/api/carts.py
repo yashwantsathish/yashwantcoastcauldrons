@@ -101,7 +101,7 @@ def search_orders(
         if query_len > curr_index + 5:
             next_index = curr_index + 5
             prev_index = curr_index - 5
-            if prev_index <= 0:
+            if prev_index < 0:
                 prev_index = ""
         else:
             prev_index = ""
@@ -121,8 +121,8 @@ def search_orders(
                 }
             )
 
-    print("prev index" + str(prev_index))
-    print("next index" + str(next_index))
+    print("prev index: " + str(prev_index))
+    print("next index: " + str(next_index))
 
     return {
         "previous": prev_index,

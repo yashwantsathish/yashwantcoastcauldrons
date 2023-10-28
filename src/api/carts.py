@@ -44,7 +44,7 @@ def search_orders(
     Search page is a cursor for pagination. The response to this
     search endpoint will return previous or next if there is a
     previous or next page of results available. The token passed
-    in that search response can be passed in the next search request
+    in that search response= can be passed in the next search request
     as search page to get that page of results.
 
     Sort col is which column to sort by and sort order is the direction
@@ -61,10 +61,10 @@ def search_orders(
 
     #search_page
 
-    curr_index = search_page
-    if search_page == "":
-        curr_index = 0
+    # Set Current Index
+    curr_index = int(search_page) if search_page else 0
     
+    # Find what to sort by
     if sort_col == search_sort_options.customer_name:
         sorter = "name"
     
@@ -74,7 +74,7 @@ def search_orders(
     elif sort_col == search_sort_options.line_item_total:
         sorter = "price"
     
-
+    #... and how to sort
     if sort_order == search_sort_order.asc:
         order = "ASC"
 
@@ -121,7 +121,8 @@ def search_orders(
                 }
             )
 
-
+    print(prev_index)
+    print(next_index)
     return {
         "previous": prev_index,
         "next": next_index,

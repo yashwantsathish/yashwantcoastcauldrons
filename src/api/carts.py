@@ -105,6 +105,8 @@ def search_orders(
             if prev_index < 0:
                 prev_index = ""
         else:
+            if curr_index > 1:
+                prev_index = curr_index - 5
             prev_index = ""
             next_index = ""
 

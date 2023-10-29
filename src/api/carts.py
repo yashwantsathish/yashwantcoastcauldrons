@@ -122,7 +122,7 @@ def search_orders(
                     "item_sku": row.sku,
                     "customer_name": row.name,
                     "line_item_total": row.price * row.quantity,
-                    "timestamp": "2021-01-01T00:00:00Z",
+                    "timestamp": row.timestamp,
                 }
             )
 

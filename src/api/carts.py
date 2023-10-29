@@ -114,6 +114,7 @@ def search_orders(
 
         for i in range(curr_index, min(curr_index + 5, query_len)):
             row = query[i-1]
+            print(row.name)
             display_list.append(
                 {
                     "line_item_id": i,

@@ -84,7 +84,8 @@ def search_orders(
 
     # Get customer name (carts name), item sku (potions), quantity (cart_items), gold (price potions table)
     with db.engine.begin() as connection:
-        query = connection.execute(sqlalchemy.text("SELECT name, cart_items.quantity, potions.sku, potions.price FROM carts " \
+        print(customer_name)
+        query = connection.execute(sqlalchemy.text("SELECT name, cart_items.quantity, potions.sku, potions.price, timestamp FROM carts " \
                                            "JOIN cart_items on carts.id = cart_items.cart_id " \
                                            "JOIN potions on potions.id = cart_items.potion_id " \
                                             "WHERE carts.name ILIKE :customer_name || '%' " \
@@ -113,11 +114,11 @@ def search_orders(
         display_list = []
 
         for i in range(curr_index, min(curr_index + 5, query_len)):
-            row = query[i-1]
+            row = query[i]
             print(row.name)
             display_list.append(
                 {
-                    "line_item_id": i,
+                    "line_item_id": i - 1,
                     "item_sku": row.sku,
                     "customer_name": row.name,
                     "line_item_total": row.price * row.quantity,

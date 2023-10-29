@@ -63,6 +63,7 @@ def search_orders(
 
     # Set Current Index
     curr_index = int(search_page) if search_page else 1
+    print(curr_index)
     
     # Find what to sort by
     if sort_col == search_sort_options.customer_name:

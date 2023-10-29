@@ -74,6 +74,9 @@ def search_orders(
 
     elif sort_col == search_sort_options.line_item_total:
         sorter = "price"
+
+    elif sort_col == search_sort_options.timestamp:
+        sorter = "timestamp"
     
     #... and how to sort
     if sort_order == search_sort_order.asc:

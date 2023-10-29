@@ -73,7 +73,7 @@ def search_orders(
         sorter = "sku"
 
     elif sort_col == search_sort_options.line_item_total:
-        sorter = "price"
+        sorter = "cost"
 
     elif sort_col == search_sort_options.timestamp:
         sorter = "timestamp"
@@ -88,7 +88,7 @@ def search_orders(
     # Get customer name (carts name), item sku (potions), quantity (cart_items), gold (price potions table)
     with db.engine.begin() as connection:
         print(customer_name)
-        query = connection.execute(sqlalchemy.text("SELECT name, cart_items.quantity, potions.sku, potions.price, timestamp FROM carts " \
+        query = connection.execute(sqlalchemy.text("SELECT name, cart_items.quantity, potions.sku, timestamp, cost FROM carts " \
                                            "JOIN cart_items on carts.id = cart_items.cart_id " \
                                            "JOIN potions on potions.id = cart_items.potion_id " \
                                             "WHERE carts.name ILIKE :customer_name || '%' " \
@@ -124,7 +124,7 @@ def search_orders(
                     "line_item_id": i - 1,
                     "item_sku": row.sku,
                     "customer_name": row.name,
-                    "line_item_total": row.price * row.quantity,
+                    "line_item_total": row.cost,
                     "timestamp": row.timestamp,
                 }
             )
@@ -227,6 +227,13 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
         connection.execute(sqlalchemy.text("INSERT INTO ledger (gold_change) VALUES (:gold_paid)"), 
                            {
                                "gold_paid": gold_paid
+                           })
+        
+        connection.execute(sqlalchemy.text("UPDATE cart_items SET cost = :gold_paid " \
+                                           "WHERE cart_id = :cart_id"), 
+                           {
+                               "gold_paid": gold_paid,
+                               "cart_id": cart_id
                            })
 
         return {"total_potions_bought": num_bought, "total_gold_paid": gold_paid}

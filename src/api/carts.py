@@ -102,41 +102,42 @@ def search_orders(
         query = query.fetchall()
 
         query_len = len(query)
-        curr_index = int(curr_index)
-        if query_len > curr_index + 5:
-            next_index = curr_index + 5
-            prev_index = curr_index - 5
-            if prev_index < 0:
-                prev_index = ""
-        else:
+        curr_index = int(search_page) if search_page else 1
+
+        if query_len == 0:
             prev_index = ""
             next_index = ""
-            if curr_index > 1:
-                prev_index = curr_index - 5
+        else:
+            items_per_page = 5
+            start_index = (curr_index - 1) * items_per_page
+            end_index = start_index + items_per_page
 
-        display_list = []
+            if end_index < query_len:
+                prev_index = curr_index - 1 if curr_index > 1 else ""
+                next_index = curr_index + 1
+            else:
+                prev_index = curr_index - 1 if curr_index > 1 else ""
+                next_index = ""
 
-        for i in range(curr_index, min(curr_index + 5, query_len)):
-            row = query[i]
-            print(row.name)
-            display_list.append(
-                {
-                    "line_item_id": i - 1,
-                    "item_sku": row.sku,
-                    "customer_name": row.name,
-                    "line_item_total": row.cost,
-                    "timestamp": row.timestamp,
-                }
-            )
+            display_list = []
 
-    print("prev index: " + str(prev_index))
-    print("next index: " + str(next_index))
+            for i in range(start_index, min(end_index, query_len)):
+                row = query[i]
+                display_list.append(
+                    {
+                        "line_item_id": i,
+                        "item_sku": row.sku,
+                        "customer_name": row.name,
+                        "line_item_total": row.cost,
+                        "timestamp": row.timestamp,
+                    }
+                )
 
-    return {
-        "previous": prev_index,
-        "next": next_index,
-        "results": display_list,
-    }
+        return {
+            "previous": prev_index,
+            "next": next_index,
+            "results": display_list,
+        }
 
 class NewCart(BaseModel):
     customer: str

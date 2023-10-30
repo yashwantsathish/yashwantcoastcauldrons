@@ -61,9 +61,7 @@ def search_orders(
 
     #search_page
 
-    # Set Current Index
-    curr_index = int(search_page) if search_page else 1
-    print(curr_index)
+    print(search_page)
     
     # Find what to sort by
     if sort_col == search_sort_options.customer_name:
@@ -102,22 +100,31 @@ def search_orders(
         query = query.fetchall()
 
         query_len = len(query)
-        curr_index = int(search_page) if search_page else 1
+
+        if search_page:
+            page_index = int(search_page) 
+        else:
+            page_index = 1
 
         if query_len == 0:
             prev_index = ""
             next_index = ""
         else:
-            items_per_page = 5
-            start_index = (curr_index - 1) * items_per_page
-            end_index = start_index + items_per_page
+            start_index = (page_index - 1) * 5
+            end_index = start_index + 5
 
-            if end_index < query_len:
-                prev_index = curr_index - 1 if curr_index > 1 else ""
-                next_index = curr_index + 1
+            if query_len > end_index:
+                next_index = page_index + 1
+                if page_index > 1:
+                    prev_index = page_index - 1 
+                else: 
+                    prev_index = ""
             else:
-                prev_index = curr_index - 1 if curr_index > 1 else ""
                 next_index = ""
+                if page_index > 1:
+                    prev_index = page_index - 1 
+                else:
+                    prev_index = ""
 
             display_list = []
 

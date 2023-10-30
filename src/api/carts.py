@@ -83,10 +83,10 @@ def search_orders(
     elif sort_order == search_sort_order.desc:
         order = "DESC"
 
-    # Get customer name (carts name), item sku (potions), quantity (cart_items), gold (price potions table)
+    # Get customer name (carts name), item sku (potions), timestamp (cart items), gold (cart items table)
     with db.engine.begin() as connection:
         print(customer_name)
-        query = connection.execute(sqlalchemy.text("SELECT name, cart_items.quantity, potions.sku, timestamp, cost FROM carts " \
+        query = connection.execute(sqlalchemy.text("SELECT name, potions.sku, timestamp, cost FROM carts " \
                                            "JOIN cart_items on carts.id = cart_items.cart_id " \
                                            "JOIN potions on potions.id = cart_items.potion_id " \
                                             "WHERE carts.name ILIKE :customer_name || '%' " \
